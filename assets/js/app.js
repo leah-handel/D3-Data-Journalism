@@ -1,6 +1,15 @@
+
+function makeResponsive() {
+
+var svgArea = d3.select("body").select("svg");
+
+if (!svgArea.empty()) {
+svgArea.remove();
+}
+
 // Define SVG area dimensions
-var svgWidth = 700;
-var svgHeight = 450;
+var svgWidth = window.innerWidth*.75;
+var svgHeight = window.innerHeight*.65;
 
 // Define the chart's margins as an object
 var chartMargin = {
@@ -13,6 +22,7 @@ var chartMargin = {
 // Define dimensions of the chart area
 var chartWidth = svgWidth - chartMargin.left - chartMargin.right;
 var chartHeight = svgHeight - chartMargin.top - chartMargin.bottom;
+
 
 // Select body, append SVG area to it, and set the dimensions
 var svg = d3
@@ -37,7 +47,7 @@ d3.csv("assets/data/data.csv").then(function(data) {
     console.log(healthCareMax);
 
     var yScale = d3.scaleLinear()
-        .domain([0, healthCareMax+2])
+        .domain([d3.min(healthCare)-2, d3.max(healthCare)+2])
         .range([chartHeight, 0]);
 
     //configuring x axis
@@ -47,7 +57,7 @@ d3.csv("assets/data/data.csv").then(function(data) {
     console.log(povertyMax);
 
     var xScale = d3.scaleLinear()
-        .domain([0, povertyMax+2])
+        .domain([d3.min(poverty)-2, d3.max(poverty)+2])
         .range([0, chartWidth]);
 
     //drawing axes
@@ -72,3 +82,9 @@ d3.csv("assets/data/data.csv").then(function(data) {
           .style("fill", "#69b3a2")
 
 });
+
+}
+
+makeResponsive();
+
+d3.select(window).on("resize", makeResponsive);
