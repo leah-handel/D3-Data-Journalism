@@ -8,15 +8,15 @@ function makeResponsive() {
   }
 
   // Define SVG area dimensions
-  var svgWidth = window.innerWidth*.75;
-  var svgHeight = window.innerHeight*.65;
+  var svgWidth = window.innerWidth*.85;
+  var svgHeight = window.innerHeight*.8;
 
   // Define the chart's margins as an object
   var chartMargin = {
    top: 30,
-   right: 30,
-    bottom: 30,
-    left: 30
+   right: 50,
+    bottom: 125,
+    left: 100
   };
 
   // Define dimensions of the chart area
@@ -72,6 +72,50 @@ function makeResponsive() {
         .attr("transform", `translate(0, ${chartHeight})`)
         .call(xAxis);
 
+    var xLabels = chartGroup.append("g")
+      .attr("transform", `translate(${chartWidth / 2}, ${chartHeight})`);
+
+    xLabels.append("text")
+      .attr("dy", "2.5em")
+      .classed("active", true)
+      .style('text-anchor', 'middle')  //https://stackoverflow.com/questions/16620267/how-to-center-text-in-a-rect-element-in-d3
+      .text("% In Poverty");
+
+    xLabels.append("text")
+      .attr("dy", "4em")
+      .classed("inactive", true)
+      .style('text-anchor', 'middle') 
+      .text("Median Age");
+
+    xLabels.append("text")
+      .attr("dy", "5.5em")
+      .classed("inactive", true)
+      .style('text-anchor', 'middle') 
+      .text("Median Household Income");
+
+    var yLabels = chartGroup.append("g")
+      .attr("transform",`rotate(-90) translate(-${chartHeight/2}, 0)`); 
+      
+      // multiple transforms: https://groups.google.com/g/d3-js/c/8iS5OdLjUuM?pli=1
+      
+    yLabels.append("text")
+      .attr("dy", "-2em")
+      .classed("active", true)
+      .style('text-anchor', 'middle')
+      .text("% Lacking Healthcare");
+
+    yLabels.append("text")
+      .attr("dy", "-3.5em")
+      .classed("inactive", true)
+      .style('text-anchor', 'middle')
+      .text("% Smoke");
+
+    yLabels.append("text")
+      .attr("dy", "-5em")
+      .classed("inactive", true)
+      .style('text-anchor', 'middle')
+      .text("% Obese");
+
     //chartGroup.selectAll(".circle")
         //.data(data)
         //.enter()
@@ -92,23 +136,22 @@ function makeResponsive() {
 
     //state abbreviations using the d3 annotations library, code from here: https://bl.ocks.org/susielu/625aa4814098671290a8c6bb88a6301e
 
-    var badgeAnnotations = data.map(d => {
-            return {
-             subject: {
-               text: d.abbr,
-               radius: 10
-             },
-              color: "#3c096c",
-             type: d3.annotationBadge,
-             x: xScale(parseFloat(d.poverty)),
-              y: yScale(parseFloat(d.healthcare))
-            }
-          });
+    var badgeAnnotations = data.map(d => {return {
+      subject: {
+        text: d.abbr,
+        radius: 10
+      },
+      color: "#3c096c",
+      type: d3.annotationBadge,
+      x: xScale(parseFloat(d.poverty)),
+      y: yScale(parseFloat(d.healthcare))
+    }
+    });
         
     var makeAnnotations = d3
-          .annotation()
-          .type(d3.annotationLabel)
-          .annotations([...badgeAnnotations]);
+      .annotation()
+      .type(d3.annotationLabel)
+      .annotations([...badgeAnnotations]);
         
     chartGroup.append("g")
       .attr("class", "annotation-group")
