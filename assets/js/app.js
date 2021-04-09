@@ -36,28 +36,84 @@ function makeResponsive() {
   var chartGroup = svg.append("g")
     .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
+  // creating axis labels
+
+  var xLabels = chartGroup.append("g")
+    .attr("transform", `translate(${chartWidth / 2}, ${chartHeight})`);
+
+  xLabels.append("text")
+    .attr("dy", "2.5em")
+    .classed("active", true)
+    .style('text-anchor', 'middle')  //https://stackoverflow.com/questions/16620267/how-to-center-text-in-a-rect-element-in-d3
+    .text("% In Poverty")
+    .attr("value", "poverty");
+
+  xLabels.append("text")
+    .attr("dy", "4em")
+    .classed("inactive", true)
+    .style('text-anchor', 'middle') 
+    .text("Median Age")
+    .attr("value", "age");
+
+  xLabels.append("text")
+    .attr("dy", "5.5em")
+    .classed("inactive", true)
+    .style('text-anchor', 'middle') 
+    .text("Median Household Income")
+    .attr("value", "income");
+
+  var yLabels = chartGroup.append("g")
+    .attr("transform",`rotate(-90) translate(-${chartHeight/2}, 0)`); 
+    
+    // multiple transforms: https://groups.google.com/g/d3-js/c/8iS5OdLjUuM?pli=1
+    
+  yLabels.append("text")
+    .attr("dy", "-2em")
+    .classed("active", true)
+    .style('text-anchor', 'middle')
+    .text("% Lacking Healthcare")
+    .attr("value", "healthcare");
+
+  yLabels.append("text")
+    .attr("dy", "-3.5em")
+    .classed("inactive", true)
+    .style('text-anchor', 'middle')
+    .text("% Smoke")
+    .attr("value", "smoke");
+
+  yLabels.append("text")
+    .attr("dy", "-5em")
+    .classed("inactive", true)
+    .style('text-anchor', 'middle')
+    .text("% Obese")
+    .attr("value", "obese");
+
+  //variables to use to make scales, axes, circles
+
+  var xSelection = "poverty";
+  var ySelection = "healthcare";
+
+
 
   d3.csv("assets/data/data.csv").then(function(data) {
     console.log(data);
+    
+    // y scale using y axis variable
 
-    //configuring y axis
-
-    var healthCare = data.map(d=>parseFloat(d.healthcare));
-    var healthCareMax = Math.max(...healthCare);
-    console.log(healthCareMax);
+    var yData = data.map(d=>parseFloat(d[ySelection]));
+    console.log(yData);
 
     var yScale = d3.scaleLinear()
-        .domain([d3.min(healthCare)-2, d3.max(healthCare)+2])
+        .domain([d3.min(yData)-2, d3.max(yData)+2])
         .range([chartHeight, 0]);
 
-    //configuring x axis
+    //x scale using x axis variable
 
-    var poverty = data.map(d=>parseFloat(d.poverty));
-    var povertyMax = Math.max(...poverty);
-    console.log(povertyMax);
+    var xData = data.map(d=>parseFloat(d[xSelection]));
+    console.log(xData);
 
     var xScale = d3.scaleLinear()
-        .domain([d3.min(poverty)-1, d3.max(poverty)+2])
+        .domain([d3.min(xData)-1, d3.max(xData)+2])
         .range([0, chartWidth]);
 
     //drawing axes
@@ -72,49 +128,6 @@ function makeResponsive() {
         .attr("transform", `translate(0, ${chartHeight})`)
         .call(xAxis);
 
-    var xLabels = chartGroup.append("g")
-      .attr("transform", `translate(${chartWidth / 2}, ${chartHeight})`);
-
-    xLabels.append("text")
-      .attr("dy", "2.5em")
-      .classed("active", true)
-      .style('text-anchor', 'middle')  //https://stackoverflow.com/questions/16620267/how-to-center-text-in-a-rect-element-in-d3
-      .text("% In Poverty");
-
-    xLabels.append("text")
-      .attr("dy", "4em")
-      .classed("inactive", true)
-      .style('text-anchor', 'middle') 
-      .text("Median Age");
-
-    xLabels.append("text")
-      .attr("dy", "5.5em")
-      .classed("inactive", true)
-      .style('text-anchor', 'middle') 
-      .text("Median Household Income");
-
-    var yLabels = chartGroup.append("g")
-      .attr("transform",`rotate(-90) translate(-${chartHeight/2}, 0)`); 
-      
-      // multiple transforms: https://groups.google.com/g/d3-js/c/8iS5OdLjUuM?pli=1
-      
-    yLabels.append("text")
-      .attr("dy", "-2em")
-      .classed("active", true)
-      .style('text-anchor', 'middle')
-      .text("% Lacking Healthcare");
-
-    yLabels.append("text")
-      .attr("dy", "-3.5em")
-      .classed("inactive", true)
-      .style('text-anchor', 'middle')
-      .text("% Smoke");
-
-    yLabels.append("text")
-      .attr("dy", "-5em")
-      .classed("inactive", true)
-      .style('text-anchor', 'middle')
-      .text("% Obese");
 
     //chartGroup.selectAll(".circle")
         //.data(data)
@@ -143,8 +156,8 @@ function makeResponsive() {
       },
       color: "#3c096c",
       type: d3.annotationBadge,
-      x: xScale(parseFloat(d.poverty)),
-      y: yScale(parseFloat(d.healthcare))
+      x: xScale(parseFloat(d[xSelection])),
+      y: yScale(parseFloat(d[ySelection]))
     }
     });
         
