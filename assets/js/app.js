@@ -1,3 +1,7 @@
+var xOptions = ["poverty", "age", "income"];
+
+var yOptions = ["healthcare", "smoke", "obese"];
+
 
 function makeResponsive() {
 
@@ -33,12 +37,12 @@ function makeResponsive() {
 
   // Append a group to the SVG area and shift ('translate') it to the right and down to adhere
   // to the margins set in the "chartMargin" object.
-  var chartGroup = svg.append("g")
+  var labelsGroup = svg.append("g")
     .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
   // creating axis labels
 
-  var xLabels = chartGroup.append("g")
+  var xLabels = labelsGroup.append("g")
     .attr("transform", `translate(${chartWidth / 2}, ${chartHeight})`);
 
   xLabels.append("text")
@@ -62,7 +66,7 @@ function makeResponsive() {
     .text("Median Household Income")
     .attr("value", "income");
 
-  var yLabels = chartGroup.append("g")
+  var yLabels = labelsGroup.append("g")
     .attr("transform",`rotate(-90) translate(-${chartHeight/2}, 0)`); 
     
     // multiple transforms: https://groups.google.com/g/d3-js/c/8iS5OdLjUuM?pli=1
@@ -93,84 +97,90 @@ function makeResponsive() {
   var xSelection = "poverty";
   var ySelection = "healthcare";
 
-
+  var chartGroup = svg.append("g")
+    .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
   d3.csv("assets/data/data.csv").then(function(data) {
     console.log(data);
     
-    // y scale using y axis variable
 
-    var yData = data.map(d=>parseFloat(d[ySelection]));
-    console.log(yData);
+    function makeGraph() {
 
-    var yScale = d3.scaleLinear()
+      // clearing contents from an svg element from https://stackoverflow.com/questions/10784018/how-can-i-remove-or-replace-svg-content
+
+      chartGroup.selectAll("*").remove();
+
+      // y scale using y axis variable
+      var yData = data.map(d=>parseFloat(d[ySelection]));
+      console.log(yData);
+
+      var yScale = d3.scaleLinear()
         .domain([d3.min(yData)-2, d3.max(yData)+2])
         .range([chartHeight, 0]);
 
-    //x scale using x axis variable
+      //x scale using x axis variable
 
-    var xData = data.map(d=>parseFloat(d[xSelection]));
-    console.log(xData);
+      var xData = data.map(d=>parseFloat(d[xSelection]));
+      console.log(xData);
 
-    var xScale = d3.scaleLinear()
+      var xScale = d3.scaleLinear()
         .domain([d3.min(xData)-1, d3.max(xData)+2])
         .range([0, chartWidth]);
 
-    //drawing axes
+      //drawing axes
 
-    var yAxis = d3.axisLeft(yScale);
-    var xAxis = d3.axisBottom(xScale);
+      var yAxis = d3.axisLeft(yScale);
+      var xAxis = d3.axisBottom(xScale);
 
-    chartGroup.append("g")
+      chartGroup.append("g")
         .call(yAxis);
 
-    chartGroup.append("g")
+      chartGroup.append("g")
         .attr("transform", `translate(0, ${chartHeight})`)
         .call(xAxis);
 
+      //state abbreviations using the d3 annotations library, code from here: https://bl.ocks.org/susielu/625aa4814098671290a8c6bb88a6301e
 
-    //chartGroup.selectAll(".circle")
-        //.data(data)
-        //.enter()
-        //.append("circle")
-          //.attr("cx", d=>xScale(parseFloat(d.poverty)))
-          //.attr("cy", d=>yScale(parseFloat(d.healthcare)))
-          //.attr("r", 8)
-          //.style("fill", "#69b3a2");
+      var badgeAnnotations = data.map(d => {return {
+        subject: {
+          text: d.abbr,
+          radius: 10
+        },
+        color: "#3c096c",
+        type: d3.annotationBadge,
+        x: xScale(parseFloat(d[xSelection])),
+        y: yScale(parseFloat(d[ySelection]))
+      }
+      });
+        
+      var makeAnnotations = d3
+        .annotation()
+        .type(d3.annotationLabel)
+        .annotations([...badgeAnnotations]);
+        
+      chartGroup.append("g")
+        .attr("class", "annotation-group")
+        .call(makeAnnotations);
 
-    //chartGroup.selectAll("g")
-    //  .data(data)
-    //  .enter()
-    //  .append("text")
-    //  .attr("x", d=>xScale(parseFloat(d.poverty)))
-    //  .attr("y", d=>yScale(parseFloat(d.healthcare)))
-    //  .attr("dy", ".35em")
-    //  .text(d=>d.abbr)
+    };
 
-    //state abbreviations using the d3 annotations library, code from here: https://bl.ocks.org/susielu/625aa4814098671290a8c6bb88a6301e
+    makeGraph();
 
-    var badgeAnnotations = data.map(d => {return {
-      subject: {
-        text: d.abbr,
-        radius: 10
-      },
-      color: "#3c096c",
-      type: d3.annotationBadge,
-      x: xScale(parseFloat(d[xSelection])),
-      y: yScale(parseFloat(d[ySelection]))
-    }
+    xLabels.selectAll("text").on("click", function() {
+
+      xSelection = d3.select(this).attr("value");
+
+      xOptions.forEach(function(option) {
+        if (xSelection == option) {
+          d3.selectAll(`.xLabels.[value = "${options}"]`)
+            .classed("active, true")
+            .classed("inactive, false")
+
+        }
+      });
+
+      makeGraph();
     });
-        
-    var makeAnnotations = d3
-      .annotation()
-      .type(d3.annotationLabel)
-      .annotations([...badgeAnnotations]);
-        
-    chartGroup.append("g")
-      .attr("class", "annotation-group")
-      .call(makeAnnotations);
-
-
 
   });
 
