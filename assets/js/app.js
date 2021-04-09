@@ -172,11 +172,11 @@ function makeResponsive() {
 
       xOptions.forEach(function(option) {
         if (xSelection == option) {
-          d3.selectAll(`.xLabels.[value = "${options}"]`)
-            .classed("active, true")
-            .classed("inactive, false")
-
+          xLabels.selectAll(`[value = ${option}]`)
+            .attr("class", "active") //using .attr instead of .classed because I do want to overwrite the previous inactive class
         }
+        else{xLabels.selectAll(`[value = ${option}]`)
+        .attr("class", "inactive")}
       });
 
       makeGraph();
