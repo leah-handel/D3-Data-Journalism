@@ -1,6 +1,6 @@
 var xOptions = ["poverty", "age", "income"];
 
-var yOptions = ["healthcare", "smoke", "obese"];
+var yOptions = ["healthcare", "smokes", "obesity"];
 
 
 function makeResponsive() {
@@ -83,14 +83,14 @@ function makeResponsive() {
     .classed("inactive", true)
     .style('text-anchor', 'middle')
     .text("% Smoke")
-    .attr("value", "smoke");
+    .attr("value", "smokes");
 
   yLabels.append("text")
     .attr("dy", "-5em")
     .classed("inactive", true)
     .style('text-anchor', 'middle')
     .text("% Obese")
-    .attr("value", "obese");
+    .attr("value", "obesity");
 
   //variables to use to make scales, axes, circles
 
@@ -166,6 +166,8 @@ function makeResponsive() {
 
     makeGraph();
 
+    // x axis event listener
+
     xLabels.selectAll("text").on("click", function() {
 
       xSelection = d3.select(this).attr("value");
@@ -182,10 +184,29 @@ function makeResponsive() {
       makeGraph();
     });
 
+    //y axis event listener
+
+    yLabels.selectAll("text").on("click", function() {
+
+      ySelection = d3.select(this).attr("value");
+
+      yOptions.forEach(function(option) {
+        if (ySelection == option) {
+          yLabels.selectAll(`[value = ${option}]`)
+           .attr("class", "active") //using .attr instead of .classed because I do want to overwrite the previous inactive class
+        }
+        else{yLabels.selectAll(`[value = ${option}]`)
+          .attr("class", "inactive")}
+      });
+
+      makeGraph();
+    });
   });
 
 }
 
 makeResponsive();
+
+// window size event listener
 
 d3.select(window).on("resize", makeResponsive);
