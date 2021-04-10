@@ -124,7 +124,7 @@ function makeResponsive() {
       console.log(xData);
 
       var xScale = d3.scaleLinear()
-        .domain([d3.min(xData)-1, d3.max(xData)+2])
+        .domain([d3.min(xData)*.95, d3.max(xData)*1.03])
         .range([0, chartWidth]);
 
       //drawing axes
