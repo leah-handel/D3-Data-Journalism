@@ -156,11 +156,31 @@ function makeResponsive() {
       var makeAnnotations = d3
         .annotation()
         .type(d3.annotationLabel)
-        .annotations([...badgeAnnotations]);
+        .annotations([...badgeAnnotations])
         
       chartGroup.append("g")
         .attr("class", "annotation-group")
         .call(makeAnnotations);
+
+      var tool_tip = d3.tip()
+        .attr("class", "d3-tip")
+        .offset([-8, 0])
+        .html(d=>`${d.state}<br>${xSelection}: ${d[xSelection]}<br>${ySelection}: ${d[ySelection]}`);
+      chartGroup.call(tool_tip);
+
+
+      // invisible circles for the tooltips to attach to because I couldn't get them to attach to the annotations (;｀O´)o
+
+      chartGroup.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("r", 10)
+      .attr("opacity", "0")
+      .attr("cx", d => xScale(parseFloat(d[xSelection])))
+      .attr("cy", d => yScale(parseFloat(d[ySelection])))
+      .on('mouseover', tool_tip.show)
+      .on('mouseout', tool_tip.hide);
 
     };
 
