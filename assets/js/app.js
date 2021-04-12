@@ -1,7 +1,17 @@
+// static axis info
+
 var xOptions = ["poverty", "age", "income"];
 
 var yOptions = ["healthcare", "smokes", "obesity"];
 
+var tool_tip_suffixes = {
+  poverty: "%",
+  age: " years",
+  income: " $/year",
+  healthcare: "%",
+  smokes: "%",
+  obesity: "%"
+};
 
 function makeResponsive() {
 
@@ -35,8 +45,8 @@ function makeResponsive() {
     .attr("height", svgHeight)
     .attr("width", svgWidth);
 
-  // Append a group to the SVG area and shift ('translate') it to the right and down to adhere
-  // to the margins set in the "chartMargin" object.
+  // group for axis labels
+
   var labelsGroup = svg.append("g")
     .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
@@ -67,9 +77,7 @@ function makeResponsive() {
     .attr("value", "income");
 
   var yLabels = labelsGroup.append("g")
-    .attr("transform",`rotate(-90) translate(-${chartHeight/2}, 0)`); 
-    
-    // multiple transforms: https://groups.google.com/g/d3-js/c/8iS5OdLjUuM?pli=1
+    .attr("transform",`rotate(-90) translate(-${chartHeight/2}, 0)`); // https://groups.google.com/g/d3-js/c/8iS5OdLjUuM?pli=1
     
   yLabels.append("text")
     .attr("dy", "-2em")
@@ -92,7 +100,7 @@ function makeResponsive() {
     .text("% Obese")
     .attr("value", "obesity");
 
-  //variables to use to make scales, axes, circles
+  // initial x and y selections
 
   var xSelection = "poverty";
   var ySelection = "healthcare";
@@ -100,19 +108,19 @@ function makeResponsive() {
   var chartGroup = svg.append("g")
     .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
+  // reading in data
+
   d3.csv("assets/data/data.csv").then(function(data) {
     console.log(data);
     
-
     function makeGraph() {
 
-      // clearing contents from an svg element from https://stackoverflow.com/questions/10784018/how-can-i-remove-or-replace-svg-content
+      // clearing contents from the svg https://stackoverflow.com/questions/10784018/how-can-i-remove-or-replace-svg-content
 
       chartGroup.selectAll("*").remove();
 
       // y scale using y axis variable
       var yData = data.map(d=>parseFloat(d[ySelection]));
-      console.log(yData);
 
       var yScale = d3.scaleLinear()
         .domain([d3.min(yData)-2, d3.max(yData)+2])
@@ -121,7 +129,6 @@ function makeResponsive() {
       //x scale using x axis variable
 
       var xData = data.map(d=>parseFloat(d[xSelection]));
-      console.log(xData);
 
       var xScale = d3.scaleLinear()
         .domain([d3.min(xData)*.95, d3.max(xData)*1.03])
@@ -162,14 +169,7 @@ function makeResponsive() {
         .attr("class", "annotation-group")
         .call(makeAnnotations);
 
-      var tool_tip_suffixes = {
-        poverty: "%",
-        age: " years",
-        income: " $/year",
-        healthcare: "%",
-        smokes: "%",
-        obesity: "%"
-      };
+      // setting up tool tips
 
       var tool_tip = d3.tip()
         .attr("class", "d3-tip")
@@ -204,7 +204,7 @@ function makeResponsive() {
       xOptions.forEach(function(option) {
         if (xSelection == option) {
           xLabels.selectAll(`[value = ${option}]`)
-            .attr("class", "active") //using .attr instead of .classed because I do want to overwrite the previous inactive class
+            .attr("class", "active") //using .attr instead of .classed because I do want to overwrite the previous class
         }
         else{xLabels.selectAll(`[value = ${option}]`)
         .attr("class", "inactive")}
@@ -222,7 +222,7 @@ function makeResponsive() {
       yOptions.forEach(function(option) {
         if (ySelection == option) {
           yLabels.selectAll(`[value = ${option}]`)
-           .attr("class", "active") //using .attr instead of .classed because I do want to overwrite the previous inactive class
+           .attr("class", "active") //using .attr instead of .classed because I do want to overwrite the previous class
         }
         else{yLabels.selectAll(`[value = ${option}]`)
           .attr("class", "inactive")}
