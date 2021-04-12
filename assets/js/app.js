@@ -146,7 +146,7 @@ function makeResponsive() {
           text: d.abbr,
           radius: 10
         },
-        color: "#3c096c",
+        color: "#5B8E7D",
         type: d3.annotationBadge,
         x: xScale(parseFloat(d[xSelection])),
         y: yScale(parseFloat(d[ySelection]))
@@ -174,7 +174,7 @@ function makeResponsive() {
       var tool_tip = d3.tip()
         .attr("class", "d3-tip")
         .offset([-8, 0])
-        .html(d=>`${d.state}<br>${xSelection}: ${d[xSelection]}${tool_tip_suffixes[xSelection]}<br>${ySelection}: ${d[ySelection]}${tool_tip_suffixes[ySelection]}`);
+        .html(d=>`<strong>${d.state}</strong><br>${xSelection}: ${d[xSelection]}${tool_tip_suffixes[xSelection]}<br>${ySelection}: ${d[ySelection]}${tool_tip_suffixes[ySelection]}`);
       chartGroup.call(tool_tip);
 
 
