@@ -162,10 +162,19 @@ function makeResponsive() {
         .attr("class", "annotation-group")
         .call(makeAnnotations);
 
+      var tool_tip_suffixes = {
+        poverty: "%",
+        age: " years",
+        income: " $/year",
+        healthcare: "%",
+        smokes: "%",
+        obesity: "%"
+      };
+
       var tool_tip = d3.tip()
         .attr("class", "d3-tip")
         .offset([-8, 0])
-        .html(d=>`${d.state}<br>${xSelection}: ${d[xSelection]}<br>${ySelection}: ${d[ySelection]}`);
+        .html(d=>`${d.state}<br>${xSelection}: ${d[xSelection]}${tool_tip_suffixes[xSelection]}<br>${ySelection}: ${d[ySelection]}${tool_tip_suffixes[ySelection]}`);
       chartGroup.call(tool_tip);
 
 
