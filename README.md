@@ -3,7 +3,7 @@
 ## General Info
 This project is an interactive  scatterplot comparing demographic data by state. The user can select from three variables on the x and y axes to compare. 
 
-Done for week 15 homework for the Northwestern Data Science and Visualization Bootcamp.
+Done for week 16 homework for the Northwestern Data Science and Visualization Bootcamp.
 
 ## Technologies
 
@@ -13,8 +13,8 @@ Done for week 15 homework for the Northwestern Data Science and Visualization Bo
 
 ## Data Sources
 
-Data is from the 2014 ACS 1-year estimates from the [US Census Bureau](https://data.census.gov/cedsci/)
+Data is from the 2014 ACS 1-year estimates from the [US Census Bureau](https://data.census.gov/cedsci/).
 
 ## To Run
 
-Run index.html with an http server
+Run index.html with an http server.
