@@ -1,5 +1,7 @@
 # D3-Data-Journalism
 
+<img width="817" alt="screenshot" src="https://user-images.githubusercontent.com/74382969/116956549-218fb680-ac5b-11eb-98b7-471038b20cf6.png">
+
 ## General Info
 This project is an interactive  scatterplot comparing demographic data by state. The user can select from three variables on the x and y axes to compare. 
 
